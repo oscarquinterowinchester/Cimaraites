@@ -1,7 +1,6 @@
 <?php require_once  "vistas/vista_superior.php" ?>
 
 <?php
-include("ProyectoPrueba/conexion.php");
 
 $id = $_GET['ID'];
 
@@ -17,7 +16,21 @@ where id_usuario = $id";
 $datos = $con->query($sql);
 $row = mysqli_fetch_array($datos);
 ?>
-
+<style>
+.matricula-label{
+    display: flex !important;
+    flex-direction:row !important;
+    flex-wrap: wrap !important;
+    margin-right:0px;
+    
+}
+.matricula-label div{
+  font-size: 13px !important;
+}
+.grupo-matricula{
+  /* gap:3px !important; */
+}
+</style>
 <html> 
 <head>
 <meta charset = "utf-8">
@@ -30,11 +43,13 @@ $row = mysqli_fetch_array($datos);
 </head>
 <body>
 <div class="mx-auto" style="width: 600px;">
-<form action="aceptarSolicitud.php" method="POST">
-<form action="aceptarSolicitud.php" method="POST">
+<form action="acciones/aceptarSolicitud.php" method="POST">
 
-  <div class="form-group row">
-  <label for="id_usuario" class="col-sm-2 col-form-label">Matricula</label>
+  <div class="form-group row grupo-matricula">
+  <label for="id_usuario" class="col-sm-2 col-form-label matricula-label">
+    <div>Matricula</div>
+    <div>/No.Empleado</div>
+  </label>
   <div class="col-sm-10">
     <input type="text" id="id_usuario" class="form-control" name="id_usuario" value="<?php echo $row['id_usuario'] ?>" readonly>
 </div>
@@ -91,8 +106,27 @@ $row = mysqli_fetch_array($datos);
     </div>
 </div>
   <input type="submit" class="btn btn-primary mt-2" value="Aceptar">
-  <a href="borrar.php?id_usuario=<?php echo $row['id_usuario'] ?>" class="btn btn-danger mt-2"> Rechazar </a>
+  <!-- <a href="borrar.php?id_usuario=<?php echo $row['id_usuario'] ?>" class="btn btn-danger mt-2"> Rechazar </a> -->
+  <a class="btn btn-danger mt-2" data-toggle="modal" data-target="#confirm-delete"> Rechazar</a>
+  <a href="solicitudes.php" class="btn btn-warning mt-2">Regresar</a>
 </form>
+</div>
+
+<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">¿Seguro que quieres rechazar a este usuario?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <a href="acciones/borrar.php?id_usuario=<?php echo $row['id_usuario'] ?>" class="btn btn-danger">Confirmar</a>
+      </div>
+    </div>
+  </div>
 </div>
 </body>
 </hmtl>

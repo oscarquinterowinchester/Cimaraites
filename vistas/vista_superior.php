@@ -11,17 +11,33 @@
 
     <title>CimaRaites - Dashboard</title>
 
-    <!-- Custom fonts for this template-->
+    <!-- Custom fonts for this template -->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
-    <!-- Custom styles for this template-->
+    <!-- Custom styles for this template -->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
+    <!-- Custom styles for this page -->
+    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
+    
+    <!-- <link href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.css"> -->
+
+    <!-- <link href="https://cdn.datatables.net/1.13.3/css/dataTables.bootstrap4.min.css"/> -->
+
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
 </head>
-<?php include('ProyectoPrueba/conexion.php');?>
+<?php
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
+<?php include('conexiones/conexion.php');?>
 <body id="page-top">
 
     <!-- Page Wrapper -->
@@ -130,7 +146,7 @@
                                 <!-- Counter - Messages -->
                                 <?php 
                                 $total = 0;
-                                $sql = "SELECT id_usuario FROM usuarios where estado_usuario = 7";
+                                $sql = "SELECT id_usuario FROM usuarios where estado_usuario = 7 order by fecha_creacion";
                                 $datos = $con->query($sql);
                                 while($row=mysqli_fetch_array($datos)){
                                     $total += 1;
@@ -149,8 +165,8 @@
                                 </h6>
                                 <?php 
                                 
-                                $sql = "SELECT u.id_usuario,u.nombre,u.ap_paterno,tu.tipo_usuario from usuarios as u, 
-                                        tipo_usuario as tu where u.tipo_usuario = tu.id_tipo_usuario and u.estado_usuario = 7 limit 3";
+                                $sql = "SELECT u.id_usuario,u.nombre,u.ap_paterno,tu.tipo_usuario,u.fecha_creacion from usuarios as u, 
+                                        tipo_usuario as tu where u.tipo_usuario = tu.id_tipo_usuario and u.estado_usuario = 7 order by fecha_creacion limit 3 ";
                                 
                                 $datos = $con->query($sql);
                                 while($row = mysqli_fetch_array($datos)){
@@ -163,11 +179,30 @@
                                     </div>
                                     <div>
                                         <div class="text-truncate"><?php echo $row['tipo_usuario'] ?></div>
-                                        <div class="small text-gray-500"><?php echo $row['nombre']." ".$row['ap_paterno']?></div>
+                                        <div class="small text-gray-500"><?php echo $row['nombre']." ".$row['ap_paterno']." "?></div>
+                                        <div class="small text-gray-500"><?php echo $row['fecha_creacion']?></div>
                                     </div>
                                 </a>
                                 <?php }?>
                                 <a class="dropdown-item text-center small text-gray-500" href="solicitudes.php">Ver solicitudes</a>
+                            </div>
+                        </li>
+                        <!-- Nav item user -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['usuario']; ?></span>
+                                <img class="img-profile rounded-circle"
+                                    src="img/undraw_profile.svg">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="login.php" data-toggle="modal" data-target="#confirm-logout">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
                             </div>
                         </li>
 
@@ -178,3 +213,20 @@
                     </ul>
 
                 </nav>
+                <!-- MODAL -->
+<div class="modal fade" id="confirm-logout" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">¿Seguro que quieres salir?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <a href="login.php"class="btn btn-primary">Confirmar</a>
+      </div>
+    </div>
+  </div>
+</div>
